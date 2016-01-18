@@ -10,25 +10,39 @@ function findFirstBlobCell(sample) {
   }
 }
 
-function findBlobCellNeighbors(sample, blobTop, cell) {
+function cellFound(foundCells, cell) {
+  for ( var k = 0; k < foundCells.length; k++){
+        if (foundCells[k].i === cell.i && foundCells[k].j === cell.j) {
+          return true;
+        }
+      }
+    return false;
+}
+
+function findBlobCellNeighbors(sample, blobTop, foundCells, cell) {
+
   var neighbors = [];
-  if( cell.i != blobTop && cell.i > 0){
-    if (sample[cell.i - 1][cell.j] === 1){
+  if ( cell.i != blobTop && cell.i > 0 &&
+    !cellFound(foundCells, {i: cell.i-1, j :cell.j})){
+    if ( sample[cell.i - 1][cell.j] === 1 ){
       neighbors.push({i: cell.i - 1, j: cell.j});
     }
   }
-  if ( cell.j > 0 ) {
-    if (sample[cell.i][cell.j - 1] === 1){
+  if ( cell.j > 0 &&
+    !cellFound(foundCells, {i: cell.i, j :cell.j-1})) {
+    if ( sample[cell.i][cell.j - 1] === 1 ){
       neighbors.push({i: cell.i, j: cell.j - 1});
     }
   }
-  if ( cell.j < sample[cell.i].length - 1){
-    if (sample[cell.i][cell.j + 1] === 1){
+  if ( cell.j < sample[cell.i].length - 1 &&
+    !cellFound(foundCells, {i: cell.i, j :cell.j + 1})) {
+    if ( sample[cell.i][cell.j + 1] === 1 ){
       neighbors.push({i: cell.i, j: cell.j + 1});
     }
   }
-  if ( cell.i < sample.length - 1 ){
-    if (sample[cell.i + 1][cell.j] === 1) {
+  if ( cell.i < sample.length - 1 &&
+    !cellFound(foundCells, {i: cell.i+1, j :cell.j})){
+    if ( sample[cell.i + 1][cell.j] === 1) {
       neighbors.push({i: cell.i + 1, j: cell.j});
     }
   }
@@ -37,26 +51,15 @@ function findBlobCellNeighbors(sample, blobTop, cell) {
 
 function findBlobCells(sample) {
   var firstCell = findFirstBlobCell(sample);
-  if (firstCell == null) {
+  if (firstCell == null) { //null check for empty map
     return null;
   }
   var top = firstCell.i;
   var blobCells = [firstCell];
   for (var i = 0; i < blobCells.length; i++) {
-    var neighbors = findBlobCellNeighbors(sample, top, blobCells[i]);
+    var neighbors = findBlobCellNeighbors(sample, top, blobCells, blobCells[i]);
     for (var j = 0; j < neighbors.length; j++) {
-      for (
-            var k = 0;
-            k < blobCells.length &&
-            !(
-              blobCells[k].i === neighbors[j].i &&
-              blobCells[k].j === neighbors[j].j
-            );
-            k++
-          );
-      if (k >= blobCells.length) {
-        blobCells.push(neighbors[j]);
-      }
+      blobCells.push(neighbors[j]);
     }
   }
 
