@@ -37,7 +37,10 @@ function findBlobCellNeighbors(sample, blobTop, cell) {
 
 function findBlobCells(sample) {
   var firstCell = findFirstBlobCell(sample);
-  var top = firstCell.j;
+  if (firstCell == null) {
+    return null;
+  }
+  var top = firstCell.i;
   var blobCells = [firstCell];
   for (var i = 0; i < blobCells.length; i++) {
     var neighbors = findBlobCellNeighbors(sample, top, blobCells[i]);
@@ -62,8 +65,24 @@ function findBlobCells(sample) {
 
 function findBlobBoundaries(sample) {
   var blobCells = findBlobCells(sample);
-  console.log(blobCells);
-
+  if (blobCells == null) {
+    return null;
+  }
+  var top = blobCells[0].i;
+  var left = blobCells[0].j;
+  var bottom = blobCells[0].i;
+  var right = blobCells[0].j;
+  for (var i = 0; i < blobCells.length; i++) {
+    left    =  ( blobCells[i].j <= left   ? blobCells[i].j : left   );
+    bottom  =  ( blobCells[i].i >= bottom ? blobCells[i].i : bottom );
+    right   =  ( blobCells[i].j >= right  ? blobCells[i].j : right  );
+  }
+  return {
+    top   : top,
+    left  : left,
+    bottom: bottom,
+    right : right
+  }
 }
 
-findBlobBoundaries(sample);
+console.log(findBlobBoundaries(sample));
