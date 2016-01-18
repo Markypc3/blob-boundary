@@ -35,11 +35,34 @@ function findBlobCellNeighbors(sample, blobTop, cell) {
   return neighbors;
 }
 
-function findBlobBoundaries(sample) {
+function findBlobCells(sample) {
   var firstCell = findFirstBlobCell(sample);
   var top = firstCell.j;
   var blobCells = [firstCell];
-  console.log(findBlobCellNeighbors(sample, top, blobCells[0]));
+  for (var i = 0; i < blobCells.length; i++) {
+    var neighbors = findBlobCellNeighbors(sample, top, blobCells[i]);
+    for (var j = 0; j < neighbors.length; j++) {
+      for (
+            var k = 0;
+            k < blobCells.length &&
+            !(
+              blobCells[k].i === neighbors[j].i &&
+              blobCells[k].j === neighbors[j].j
+            );
+            k++
+          );
+      if (k >= blobCells.length) {
+        blobCells.push(neighbors[j]);
+      }
+    }
+  }
+
+  return blobCells;
+}
+
+function findBlobBoundaries(sample) {
+  var blobCells = findBlobCells(sample);
+  console.log(blobCells);
 
 }
 
